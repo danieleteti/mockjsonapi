@@ -1,0 +1,41 @@
+{
+	"employee": [
+		{
+			"first_name": "Daniele",
+			"last_name": "Teti",
+			"_oid": 1
+		},
+		{
+			"first_name": "Bruce",
+			"last_name": "Banner",
+			"_oid": 2
+		},
+		{
+			"first_name": "Mattia",
+			"last_name": "Teti",
+			"_oid": 3
+		},
+		{
+			"first_name": "Mattia",
+			"last_name": "Teti",
+			"_oid": "4D234E5C-3AF8-41E6-AC03-CBB2028482A7"
+		}
+	],
+	"projects": [
+		{
+			"department": "marketing",
+			"description": "Falcon Fly"
+		},
+		{
+			"department": "R&D",
+			"description": "NextGen"
+		}
+	],
+	"telefoni": [
+		{
+			"number": "555-78945",
+			"type": "home",
+			"_oid": "675821EE-5633-446E-8078-C635AB9EEDD6"
+		}
+	]
+}
