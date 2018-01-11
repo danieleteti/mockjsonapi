@@ -1,26 +1,4 @@
 {
-	"employee": [
-		{
-			"first_name": "Daniele",
-			"last_name": "Teti",
-			"_oid": 1
-		},
-		{
-			"first_name": "Bruce",
-			"last_name": "Banner",
-			"_oid": 2
-		},
-		{
-			"first_name": "Mattia",
-			"last_name": "Teti",
-			"_oid": 3
-		},
-		{
-			"first_name": "Mattia",
-			"last_name": "Teti",
-			"_oid": "4D234E5C-3AF8-41E6-AC03-CBB2028482A7"
-		}
-	],
 	"projects": [
 		{
 			"department": "marketing",
@@ -31,11 +9,46 @@
 			"description": "NextGen"
 		}
 	],
-	"telefoni": [
+	"resource0944": [
 		{
-			"number": "555-78945",
-			"type": "home",
-			"_oid": "675821EE-5633-446E-8078-C635AB9EEDD6"
+			"key": "changed",
+			"_oid": "FF135413-BE88-46BE-B179-B51716682FF0"
+		},
+		{
+			"key": "value01",
+			"_oid": "1F135362-A980-470C-AE6A-B25DBE298F2E"
+		},
+		{
+			"key": "value02",
+			"_oid": "FE1C361E-3454-4F28-9420-804475F3C068"
+		},
+		{
+			"key": "value03",
+			"_oid": "40BE6B08-6E31-4A1A-BD6A-43A3328D1FC0"
+		},
+		{
+			"key": "value04",
+			"_oid": "0282A033-6F5A-49D7-9A99-E57F2788CB39"
+		},
+		{
+			"key": "value05",
+			"_oid": "270DDBAB-4BF2-459C-BA80-E8235A2343C3"
+		},
+		{
+			"key": "value06",
+			"_oid": "E5E89E5A-03AC-4CCB-B3B7-C5B7E1EBCEC0"
+		},
+		{
+			"key": "value07",
+			"_oid": "9F8FA965-D7BA-4151-94A5-99ED11C0B84E"
+		},
+		{
+			"key": "value08",
+			"_oid": "C0415C34-0DA9-41A0-A0B1-5146B57AB827"
+		},
+		{
+			"key": "value09",
+			"_oid": "1859CBE2-463D-4DE1-AD54-472288DB4218"
 		}
 	]
 }

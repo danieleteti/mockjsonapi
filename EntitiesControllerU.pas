@@ -10,17 +10,29 @@ type
   [MVCPath('/api')]
   TEntitiesController = class(TMVCController)
   public
-    [MVCPath('/($entityname)')]
+    [MVCPath('/($resourcename)')]
     [MVCHTTPMethods([httpGET])]
-    procedure GetEntities(const entityname: string);
+    procedure GetEntities(const resourcename: string);
 
-    [MVCPath('/($entityname)/($entityid)')]
+    [MVCPath('/($resourcename)/($entityid)')]
     [MVCHTTPMethods([httpGET])]
-    procedure GetEntity(const entityname: string; const entityid: string);
+    procedure GetEntity(const resourcename: string; const entityid: string);
 
-    [MVCPath('/($entityname)')]
+    [MVCPath('/($resourcename)/($entityid)')]
+    [MVCHTTPMethods([httpDELETE])]
+    procedure DeleteEntity(const resourcename: string; const entityid: string);
+
+    [MVCPath('/($resourcename)/($entityid)')]
+    [MVCHTTPMethods([httpPUT])]
+    procedure UpdateEntity(const resourcename: string; const entityid: string);
+
+    [MVCPath('/($resourcename)')]
+    [MVCHTTPMethods([httpDELETE])]
+    procedure DeleteResource(const resourcename: string);
+
+    [MVCPath('/($resourcename)')]
     [MVCHTTPMethods([httpPOST])]
-    procedure CreateEntities(const entityname: string);
+    procedure CreateEntities(const resourcename: string);
   end;
 
 implementation
@@ -31,7 +43,7 @@ uses
 
 { TEntitiesController }
 
-procedure TEntitiesController.CreateEntities(const entityname: string);
+procedure TEntitiesController.CreateEntities(const resourcename: string);
 var
   lJson: TJsonObject;
   lOID: string;
@@ -39,17 +51,29 @@ begin
   lJson := TJSONObject.Parse(Context.Request.Body) as TJSONObject;
   try
     Context.Response.StatusCode := http_status.Created;
-    lOID := GetDAL.CreateEntity(entityname, lJson);
-    Context.Response.SetCustomHeader('X-REF', '/' + entityname + '/' + lOID);
+    lOID := GetDAL.CreateEntity(resourcename, lJson);
+    Context.Response.SetCustomHeader('X-REF', '/api/' + resourcename + '/' + lOID);
   finally
     lJson.Free;
   end;
 end;
 
-procedure TEntitiesController.GetEntities(const entityname: string);
+procedure TEntitiesController.DeleteEntity(const resourcename, entityid: string);
+begin
+  GetDAL.DeleteEntity(resourcename, entityid);
+  Context.Response.StatusCode := http_status.OK;
+end;
+
+procedure TEntitiesController.DeleteResource(const resourcename: string);
+begin
+  GetDAL.DeleteResource(resourcename);
+  StatusCode := http_status.OK;
+end;
+
+procedure TEntitiesController.GetEntities(const resourcename: string);
 begin
   try
-    Render(GetDAL.GetEntities(entityname), True);
+    Render(GetDAL.GetEntities(resourcename), True);
   except
     on E: ENotFound do
     begin
@@ -58,15 +82,30 @@ begin
   end;
 end;
 
-procedure TEntitiesController.GetEntity(const entityname: string; const entityid: string);
+procedure TEntitiesController.GetEntity(const resourcename: string; const entityid: string);
 begin
   try
-    Render(GetDAL.GetEntity(entityname, entityid), True);
+    Render(GetDAL.GetEntity(resourcename, entityid), True);
   except
     on E: ENotFound do
     begin
       Render(http_status.NotFound, e.Message);
     end;
+  end;
+end;
+
+procedure TEntitiesController.UpdateEntity(const resourcename,
+  entityid: string);
+var
+  lJson: TJsonObject;
+  lOID: string;
+begin
+  lJson := TJSONObject.Parse(Context.Request.Body) as TJSONObject;
+  try
+    GetDAL.UpdateEntity(lJson, resourcename, entityid);
+    Context.Response.StatusCode := http_status.OK;
+  finally
+    lJson.Free;
   end;
 end;
 

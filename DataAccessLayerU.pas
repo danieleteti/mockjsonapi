@@ -24,6 +24,8 @@ type
   IDALService = interface
     ['{B03B66EF-C713-403B-A09B-8EDE0A6385B3}']
     function GetEntity(const EntityName: string; const EntityID: string): TJsonObject;
+    procedure DeleteEntity(const EntityName: string; const EntityID: string);
+    procedure DeleteResource(const EntityName: string);
     function GetEntities(const EntityName: string): TJsonArray;
     function CreateEntity(const EntityName: string; const JsonObject: TJsonObject): string;
     procedure UpdateEntity(const JsonData: TJSONObject; const EntityName, EntityID: string);
@@ -37,9 +39,12 @@ type
     cJSONFileName: string = 'data.json';
   protected
     function GetJSONObjectByOID(const JsonData: TJSONObject; const EntityName, EntityID: string): TJsonObject;
+    function IndexOfObject(const JsonData: TJSONObject; const EntityName, EntityID: string): Integer;
     function GetNewOID: string;
     procedure ExecWithLock(const Proc: TProc<TJSONObject>; const Action: TExecAction = TExecAction.ReadOnly);
     function GetEntity(const EntityName: string; const EntityID: string): TJsonObject;
+    procedure DeleteEntity(const EntityName: string; const EntityID: string);
+    procedure DeleteResource(const EntityName: string);
     function GetEntities(const EntityName: string): TJsonArray;
     function CreateEntity(const EntityName: string; const JsonObject: TJsonObject): string;
     procedure UpdateEntity(const JsonData: TJSONObject; const EntityName, EntityID: string);
@@ -82,6 +87,30 @@ begin
       lRes := lObj.S[OID_KEY_NAME];
     end, TExecAction.ReadAndWrite);
   Result := lRes;
+end;
+
+procedure TDALService.DeleteEntity(const EntityName, EntityID: string);
+begin
+  ExecWithLock(
+    procedure(JSONData: TJsonObject)
+    var
+      lObj: TJsonObject;
+      lEntityIndex: Integer;
+    begin
+      lEntityIndex := IndexOfObject(jsondata, EntityName, EntityID);
+      if lEntityIndex > -1 then
+        JSONData.A[EntityName].Delete(lEntityIndex);
+      { no exception if no data found }
+    end, TExecAction.ReadAndWrite);
+end;
+
+procedure TDALService.DeleteResource(const EntityName: string);
+begin
+  ExecWithLock(
+    procedure(JSONData: TJSONObject)
+    begin
+      JSONData.ExtractArray(EntityName).Free;
+    end, TExecAction.ReadAndWrite);
 end;
 
 class destructor TDALService.Destroy;
@@ -148,34 +177,46 @@ begin
   Result := lRes;
 end;
 
-function TDALService.GetJSONObjectByOID(
-
-  const
-  JsonData: TJSONObject;
-
-const
-  EntityName, EntityID: string): TJsonObject;
+function TDALService.GetJSONObjectByOID(const JsonData: TJSONObject; const EntityName, EntityID: string): TJsonObject;
 var
   lArr: TJsonArray;
   I: Integer;
+  lEntityIndex: Integer;
 begin
   Result := nil;
   lArr := JsonData.A[EntityName];
-  for I := 0 to lArr.Count - 1 do
+  lEntityIndex := IndexOfObject(JsonData, EntityName, EntityID);
+  if lEntityIndex > -1 then
   begin
-    if lArr.O[I].S[OID_KEY_NAME] = EntityID then
-    begin
-      Result := lArr.O[I];
-      break;
-    end;
-  end;
-  if not Assigned(Result) then
+    Result := lArr.O[lEntityIndex];
+  end
+  else
+  begin
     raise ENotFound.Create('Not Found');
+  end;
 end;
 
 function TDALService.GetNewOID: string;
 begin
   Result := TGuid.NewGuid.ToString.Replace('{', '').Replace('}', '');
+end;
+
+function TDALService.IndexOfObject(const JsonData: TJSONObject;
+const EntityName, EntityID: string): Integer;
+var
+  lArr: TJsonArray;
+  I: Integer;
+begin
+  Result := -1;
+  lArr := JsonData.A[EntityName];
+  for I := 0 to lArr.Count - 1 do
+  begin
+    if lArr.O[I].S[OID_KEY_NAME] = EntityID then
+    begin
+      Result := I;
+      break;
+    end;
+  end;
 end;
 
 procedure TDALService.UpdateEntity(
