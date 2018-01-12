@@ -1,6 +1,6 @@
 # MockJSONAPI Server
 MockJSONAPI is a mock server for a generic JSON API built with Delphi and delphimvcframework. Can be used with any client technology and language. When mockjsonapi server receives a requests it matches the request against the `data.json` that have been configured.
-If you are an experienced user, grab the latest [binary release here](https://github.com/danieleteti/mockjsonapi/releases) otherwise, keep reading the docs.
+If you are an experienced user, grab the latest [binary release here](https://github.com/danieleteti/mockjsonapi/releases/latest) otherwise, keep reading the docs.
 
 ## Getting started
 Let's say that you need to develop a REST client (e.g. mobile app, web client, web SPA or a desktop thin client) and you need some endpoints to use. The usual problem in this case is that you need to start to develop the server before you can show something to the end user. MockJSONAPI server soves this problem giving to the developer a bare-bone REST server with the standard CRUD interface. The data are stored into a single JSON file.
@@ -158,4 +158,4 @@ DELETE /api/resourcename
 ```
 
 ## How to use it
-Using MockJSONAPI Server is really siple. Just run the executable with the `data.json` file in the exe folder. You are productive in seconds starting to use the Mock API. If you want to "load" data in the server storage, just change the `data.json` with your own data.
+Using MockJSONAPI Server is really siple. Just run the executable with the `data.json` file in the exe folder (the release already contains a sample `data.json` file). You are productive in seconds starting to use the Mock API. If you want to "load" data in the server storage, just change the `data.json` with your own data.
