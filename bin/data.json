@@ -9,14 +9,97 @@
 			"description": "NextGen"
 		}
 	],
-	"customers": [
+	"resource0191": [
 		{
-			"name": "Daniele Teti",
-			"_oid": "B4617AFF-D552-4697-B5A3-1153AAE5508F"
+			"key": "changed",
+			"_oid": "E32A815D-279A-42A6-882F-A97125D49CF5"
 		},
 		{
-			"name": "Bruce Banner",
-			"_oid": "E511F2F3-ED71-4B6F-8FE4-810B6AD42101"
+			"key": "value01",
+			"_oid": "83C983DE-3F8F-4DCA-840C-D86C9E2F60C7"
+		},
+		{
+			"key": "value02",
+			"_oid": "8744266F-2408-4365-A995-C96F9601C331"
+		},
+		{
+			"key": "value03",
+			"_oid": "E56E1272-97C9-4F79-BC86-B25F2ED84F3C"
+		},
+		{
+			"key": "value04",
+			"_oid": "4F2A2B97-2A25-4A20-9249-49E01285DC05"
+		},
+		{
+			"key": "value05",
+			"_oid": "37696283-C0F7-445C-A3CB-B8958304C189"
+		},
+		{
+			"key": "value06",
+			"_oid": "E14416A2-117C-4211-BFE4-68FD4AD88566"
+		},
+		{
+			"key": "value07",
+			"_oid": "FEF51338-D3CE-43BC-A45E-D44DE787A735"
+		},
+		{
+			"key": "value08",
+			"_oid": "C52AABA8-9353-494D-9BF9-2466F7B22C11"
+		},
+		{
+			"key": "value09",
+			"_oid": "8F693407-D7C2-4570-B4D9-D81A44445FFD"
+		}
+	],
+	"employee": [
+		{
+			"_oid": "B4F2FB7C-9C44-41D7-91F0-54996313C1A0"
+		},
+		{
+			"_oid": "965794BB-15C8-4226-826D-89760B57B75D"
+		},
+		{
+			"_oid": "47592C27-4627-4977-A566-C69D21910A04"
+		},
+		{
+			"_oid": "7050F0D3-8425-4E46-A671-43FBF8F2BCF6"
+		},
+		{
+			"_oid": "580F33A8-BE8D-4BFC-9338-D720421A7EFE"
+		},
+		{
+			"_oid": "4B977AE2-52CF-4940-8F9E-CA343D9BB540"
+		},
+		{
+			"_oid": "123B1682-66B8-472E-80EF-F9A67AC7C40B"
+		},
+		{
+			"_oid": "96F3E46F-CA26-4BBB-BDC0-8DD3DCCCB1FD"
+		},
+		{
+			"_oid": "4BDC2034-679C-4650-ACB5-BFF826A262A7"
+		},
+		{
+			"_oid": "C0C99C88-C603-4AE8-883F-87EA5F23BB37"
+		},
+		{
+			"_oid": "C0B371ED-F77B-43F9-AF7E-BBC2A7E255F1"
+		},
+		{
+			"_oid": "209FFF10-BE66-41EC-878B-2217F13D9018"
+		},
+		{
+			"_oid": "AEEBCFE6-BC52-4747-9FEC-23B30219707F"
+		},
+		{
+			"_oid": "F4154234-AEFA-486E-A042-EFB6B99031C1"
+		},
+		{
+			"pippo": "Pluto",
+			"_oid": "5DB6C960-1646-49BE-8214-432F475F4C03"
+		},
+		{
+			"_oid": "2FB36A6C-C77C-4B79-9C2D-F8F6D796EA7A"
 		}
 	]
 }

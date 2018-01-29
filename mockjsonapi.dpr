@@ -37,13 +37,15 @@ uses
   Web.WebBroker,
   IdHTTPWebBrokerBridge,
   EntitiesControllerU in 'EntitiesControllerU.pas',
-  WebModuleU in 'WebModuleU.pas' {MyWebModule: TWebModule} ,
-  DataAccessLayerU in 'DataAccessLayerU.pas';
+  WebModuleU in 'WebModuleU.pas' {MyWebModule: TWebModule},
+  DataAccessLayerU in 'DataAccessLayerU.pas',
+  ConfigU in 'ConfigU.pas',
+  SecurityHeadersMiddlewareU in 'SecurityHeadersMiddlewareU.pas';
 
 {$R *.res}
 
 const
-  VERSION = '1.0.1';
+  VERSION = '1.0.3';
 
 procedure Logo;
 begin
@@ -60,7 +62,7 @@ begin
   WriteLn;
 end;
 
-procedure RunServer(APort: Integer);
+procedure RunServer(APort: Integer = 8080);
 var
   lServer: TIdHTTPWebBrokerBridge;
   lCustomHandler: TMVCCustomREPLCommandsHandler;
@@ -138,10 +140,13 @@ begin
     if WebRequestHandler <> nil then
       WebRequestHandler.WebModuleClass := WebModuleClass;
     WebRequestHandlerProc.MaxConnections := 1024;
-    RunServer(8080);
+    RunServer(TConfig.Instance.GetInteger('port'));
   except
     on E: Exception do
+    begin
+      LogE(E.ClassName + ': ' + E.Message);
       Writeln(E.ClassName, ': ', E.Message);
+    end;
   end;
   try
     ResetConsole;

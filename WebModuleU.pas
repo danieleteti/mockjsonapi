@@ -48,7 +48,8 @@ implementation
 
 {$R *.dfm}
 
-uses System.IOUtils, MVCFramework.Commons, MVCFramework.Middleware.CORS, EntitiesControllerU;
+uses System.IOUtils, MVCFramework.Commons, MVCFramework.Middleware.CORS, EntitiesControllerU,
+  SecurityHeadersMiddlewareU;
 
 procedure TMyWebModule.WebModuleCreate(Sender: TObject);
 begin
@@ -76,7 +77,8 @@ begin
     end);
   FMVC.
     AddController(TEntitiesController).
-    AddMiddleware(TCORSMiddleware.Create);
+    AddMiddleware(TCORSMiddleware.Create).
+    AddMiddleware(TSecurityHeadersMiddleware.Create);
 end;
 
 procedure TMyWebModule.WebModuleDestroy(Sender: TObject);
