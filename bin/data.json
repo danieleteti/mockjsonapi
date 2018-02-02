@@ -101,5 +101,22 @@
 		{
 			"_oid": "2FB36A6C-C77C-4B79-9C2D-F8F6D796EA7A"
 		}
+	],
+	"products": [
+		{
+			"name": "Pizza Margherita",
+			"price": 5,
+			"_oid": "51B898C9-E3B4-4CD1-BEA1-3CF3F21D51B3"
+		},
+		{
+			"name": "Pizza Capricciosa",
+			"price": 6,
+			"_oid": "8EF374E7-2DA5-4F71-B4C5-3C5775D53C36"
+		},
+		{
+			"name": "Pizza 4 Stagioni",
+			"price": 4.5,
+			"_oid": "81B07A0B-3BC5-40E9-AD84-D63A9EB6C642"
+		}
 	]
 }
