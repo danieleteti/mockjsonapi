@@ -1,3 +1,27 @@
+// ***************************************************************************
+//
+// MockJSONAPI
+//
+// Copyright (c) 2019 Daniele Teti
+//
+// https://github.com/danieleteti/mockjsonapi
+//
+// ***************************************************************************
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// *************************************************************************** }
+
 unit ConfigU;
 
 interface
@@ -13,7 +37,7 @@ type
   var
     fConfigDict: TJsonObject;
     constructor Create;
-    destructor Destroy;
+    destructor Destroy; override;
     class function GetConfig: TConfig; static;
   public
     function GetString(const ConfigName: string): string;
@@ -34,7 +58,7 @@ begin
   fConfigDict := nil;
   if TFile.Exists('config.json') then
   begin
-    fConfigDict := TJsonObject.ParseUtf8(TFile.ReadAllText('config.json')) as TJsonObject;
+    fConfigDict := TJsonObject.ParseUtf8(UTF8Encode(TFile.ReadAllText('config.json'))) as TJsonObject;
   end
   else
     raise Exception.Create('Cannot find "config.json" file');
