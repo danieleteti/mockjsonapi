@@ -4,7 +4,7 @@ import random
 import shutil
 
 class MockServerTests(unittest.TestCase):
-    URL = "http://localhost:8080"
+    URL = "http://localhost:9090"
     def setUp(self):
         shutil.copy2('test.data.json', '../bin/data.json')
         self.resname = self.URL + "/api/resource{:04}".format(random.randrange(1000))
