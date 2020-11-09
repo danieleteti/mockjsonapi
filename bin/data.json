@@ -9,14 +9,46 @@
 			"description": "NextGen"
 		}
 	],
-	"customers": [
+	"resource0661": [
 		{
-			"name": "Daniele Teti",
-			"_oid": "61616787-1F08-4187-ADBA-BCB8CA065E96"
+			"key": "changed",
+			"_oid": "DF0A1517-9A2B-46CB-BA1B-64A438C8C99D"
 		},
 		{
-			"name": "Bruce Banner",
-			"_oid": "4F1EB312-AD4F-4EDA-9F64-4CACAAB798E3"
+			"key": "value01",
+			"_oid": "4218DC90-6E0C-4F15-9D84-EFEDA223232F"
+		},
+		{
+			"key": "value02",
+			"_oid": "F2CF3435-3358-4438-A625-3B5145968BB3"
+		},
+		{
+			"key": "value03",
+			"_oid": "C5774506-05F4-4625-836E-B0CF2C342F77"
+		},
+		{
+			"key": "value04",
+			"_oid": "93AB50ED-A110-421B-B4A2-5A9B651992E1"
+		},
+		{
+			"key": "value05",
+			"_oid": "878C8C3F-1053-4FB3-BC93-798E25159078"
+		},
+		{
+			"key": "value06",
+			"_oid": "CE5D82FD-52DB-4E0E-B447-6DECFF416757"
+		},
+		{
+			"key": "value07",
+			"_oid": "EDD51C4B-4E94-4B7D-BBDC-908DAA3FDF51"
+		},
+		{
+			"key": "value08",
+			"_oid": "8FA41951-E16B-408E-AE68-C9E5F6A309FE"
+		},
+		{
+			"key": "value09",
+			"_oid": "5BAC6E95-71B1-41A4-926E-2F653134A9FE"
 		}
 	]
 }

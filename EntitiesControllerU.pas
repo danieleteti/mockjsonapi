@@ -121,7 +121,7 @@ procedure TEntitiesController.GetEntity(const resourcename: string;
   const entityid: string);
 begin
   try
-    Render(GetDAL.GetEntity(resourcename, entityid), True);
+    Render(ObjectDict().Add('data', GetDAL.GetEntity(resourcename, entityid)));
   except
     on E: ENotFound do
     begin
@@ -138,12 +138,11 @@ var
   lXRef: string;
 begin
   lResourceName := resourceName;
-  lJson := TJsonObject.Parse(Context.Request.Body) as TJsonObject;
+  lJson := StrToJSONObject(Context.Request.Body);
   try
     GetDAL.UpdateEntity(lJson, resourcename, entityid);
-    Context.Response.StatusCode := http_status.OK;
     lXRef := '/api/' + lResourceName + '/' + entityid;
-    StatusCode := HTTP_STATUS.Created;
+    StatusCode := HTTP_STATUS.OK;
     Context.Response.SetCustomHeader('Location', lXRef);
     Context.Response.SetCustomHeader('X-REF', lXRef);
     Render(ObjectDict().Add('data', StrDict(['status', 'xref'], ['ok', lXRef])));
