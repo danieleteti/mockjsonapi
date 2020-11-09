@@ -2,7 +2,7 @@
 //
 // MockJSONAPI
 //
-// Copyright (c) 2019 Daniele Teti
+// Copyright (c) 2020 Daniele Teti
 //
 // https://github.com/danieleteti/mockjsonapi
 //
@@ -29,6 +29,9 @@ interface
 uses
   JsonDataObjects;
 
+const
+  VERSION = '1.1.0';
+
 type
   TConfig = class sealed
   private
@@ -37,9 +40,9 @@ type
   var
     fConfigDict: TJsonObject;
     constructor Create;
-    destructor Destroy; override;
     class function GetConfig: TConfig; static;
   public
+    destructor Destroy; override;
     function GetString(const ConfigName: string): string;
     function GetInteger(const ConfigName: string): Integer;
     class destructor Destroy;

@@ -2,7 +2,7 @@
 //
 // MockJSONAPI
 //
-// Copyright (c) 2019 Daniele Teti
+// Copyright (c) 2020 Daniele Teti
 //
 // https://github.com/danieleteti/mockjsonapi
 //
@@ -37,15 +37,14 @@ uses
   Web.WebBroker,
   IdHTTPWebBrokerBridge,
   EntitiesControllerU in 'EntitiesControllerU.pas',
-  WebModuleU in 'WebModuleU.pas' {MyWebModule: TWebModule},
+  WebModuleU in 'WebModuleU.pas' {MainWM: TWebModule},
   DataAccessLayerU in 'DataAccessLayerU.pas',
   ConfigU in 'ConfigU.pas',
   SecurityHeadersMiddlewareU in 'SecurityHeadersMiddlewareU.pas';
 
 {$R *.res}
 
-const
-  VERSION = '1.0.3';
+
 
 procedure Logo;
 begin
@@ -68,12 +67,13 @@ var
   lCustomHandler: TMVCCustomREPLCommandsHandler;
   lCmd: string;
 begin
-  SetMode(TConsoleMode.Bright);
+  TextColor(White);
   TextBackground(Black);
   Logo;
   TextColor(Green);
   Writeln('** Built with DMVCFramework Server ** build ' + DMVCFRAMEWORK_VERSION);
   TextColor(White);
+  Writeln('Usage help: https://github.com/danieleteti/mockjsonapi');
   if ParamCount >= 1 then
     lCmd := ParamStr(1)
   else
@@ -88,26 +88,21 @@ begin
   LServer := TIdHTTPWebBrokerBridge.Create(nil);
   try
     LServer.DefaultPort := APort;
-
-    { more info about MaxConnections
-      http://ww2.indyproject.org/docsite/html/frames.html?frmname=topic&frmfile=TIdCustomTCPServer_MaxConnections.html }
+    LServer.KeepAlive := True;
     LServer.MaxConnections := 0;
-
-    { more info about ListenQueue
-      http://ww2.indyproject.org/docsite/html/frames.html?frmname=topic&frmfile=TIdCustomTCPServer_ListenQueue.html }
     LServer.ListenQueue := 200;
 
     WriteLn('Write "quit" or "exit" to shutdown the server');
     repeat
       if lCmd.IsEmpty then
       begin
-        TextColor(Yellow);
+        TextColor(TConsoleColor.White);
         write('-> ');
-        TextColor(White);
+        TextColor(Yellow);
         ReadLn(lCmd)
       end;
       try
-        TextColor(TConsoleColor.Cyan);
+        TextColor(TConsoleColor.Yellow);
         case HandleCommand(lCmd.ToLower, LServer, lCustomHandler) of
           THandleCommandResult.Continue:
             begin
@@ -119,8 +114,10 @@ begin
             end;
           THandleCommandResult.Unknown:
             begin
-              TextColor(TConsoleColor.Cyan);
+              SaveColors;
+              TextColor(TConsoleColor.Red);
               REPLEmit('Unknown command: ' + lCmd);
+              RestoreSavedColors;
             end;
         end;
       finally

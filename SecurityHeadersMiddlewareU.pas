@@ -2,7 +2,7 @@
 //
 // MockJSONAPI
 //
-// Copyright (c) 2019 Daniele Teti
+// Copyright (c) 2020 Daniele Teti
 //
 // https://github.com/danieleteti/mockjsonapi
 //
@@ -38,22 +38,32 @@ type
       var AHandled: Boolean);
     procedure OnAfterControllerAction(AContext: TWebContext;
       const AActionName: string; const AHandled: Boolean);
+    procedure OnAfterRouting(AContext: TWebContext; const AHandled: Boolean);
+
   end;
 
 implementation
 
 { TSecurityHeadersMiddleware }
 
-procedure TSecurityHeadersMiddleware.OnAfterControllerAction(
-  AContext: TWebContext; const AActionName: string; const AHandled: Boolean);
+uses ConfigU;
+
+procedure TSecurityHeadersMiddleware.OnAfterControllerAction
+  (AContext: TWebContext; const AActionName: string; const AHandled: Boolean);
 begin
 end;
 
-procedure TSecurityHeadersMiddleware.OnBeforeControllerAction(
-  AContext: TWebContext; const AControllerQualifiedClassName,
+procedure TSecurityHeadersMiddleware.OnAfterRouting(AContext: TWebContext;
+  const AHandled: Boolean);
+begin
+  //
+end;
+
+procedure TSecurityHeadersMiddleware.OnBeforeControllerAction
+  (AContext: TWebContext; const AControllerQualifiedClassName,
   AActionName: string; var AHandled: Boolean);
 begin
-
+  //
 end;
 
 procedure TSecurityHeadersMiddleware.OnBeforeRouting(AContext: TWebContext;
@@ -61,6 +71,7 @@ procedure TSecurityHeadersMiddleware.OnBeforeRouting(AContext: TWebContext;
 begin
   AContext.Response.SetCustomHeader('X-XSS-Protection', '1; mode = block');
   AContext.Response.SetCustomHeader('X-Content-Type-Options', 'nosniff');
+  AContext.Response.SetCustomHeader('X-MOCK-JSON-API', VERSION);
 end;
 
 end.

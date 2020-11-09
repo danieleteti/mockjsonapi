@@ -2,7 +2,7 @@
 //
 // MockJSONAPI
 //
-// Copyright (c) 2019 Daniele Teti
+// Copyright (c) 2020 Daniele Teti
 //
 // https://github.com/danieleteti/mockjsonapi
 //
@@ -27,7 +27,7 @@ unit EntitiesControllerU;
 interface
 
 uses
-  MVCFramework, MVCFramework.Commons;
+  MVCFramework, MVCFramework.Commons, MVCFramework.Serializer.Commons;
 
 type
 
@@ -70,50 +70,62 @@ uses
 procedure TEntitiesController.CreateEntities(const resourcename: string);
 var
   lJson: TJsonObject;
-  lOID: string;
+  lOID, lResourceName: string;
+  lXRef: string;
 begin
-  lJson := TJSONObject.Parse(Context.Request.Body) as TJSONObject;
+  ContentType := TMVCMediaType.APPLICATION_JSON;
+  lJson := TJsonObject.Parse(Context.Request.Body) as TJsonObject;
   try
+    lResourceName := resourcename.ToLower;
     Context.Response.StatusCode := http_status.Created;
-    lOID := GetDAL.CreateEntity(resourcename, lJson);
-    Context.Response.SetCustomHeader('X-REF', '/api/' + resourcename + '/' + lOID);
+    lOID := GetDAL.CreateEntity(lResourceName, lJson);
+    lXRef := '/api/' + lResourceName + '/' + lOID;
+    Context.Response.SetCustomHeader('X-REF', lXRef);
+    StatusCode := HTTP_STATUS.Created;
+    Context.Response.SetCustomHeader('Location', lXRef);
+    Render(ObjectDict().Add('data', StrDict(['status', 'xref'], ['ok', lXRef])));
+    //Render201Created(lXRef);
   finally
     lJson.Free;
   end;
 end;
 
-procedure TEntitiesController.DeleteEntity(const resourcename, entityid: string);
+procedure TEntitiesController.DeleteEntity(const resourcename,
+  entityid: string);
 begin
   GetDAL.DeleteEntity(resourcename, entityid);
-  Context.Response.StatusCode := http_status.OK;
+  StatusCode := http_status.OK;
+  Render(ObjectDict().Add('data', StrDict(['status'], ['ok'])));
 end;
 
 procedure TEntitiesController.DeleteResource(const resourcename: string);
 begin
   GetDAL.DeleteResource(resourcename);
   StatusCode := http_status.OK;
+  Render(ObjectDict().Add('data', StrDict(['status'], ['ok'])));
 end;
 
 procedure TEntitiesController.GetEntities(const resourcename: string);
 begin
   try
-    Render(GetDAL.GetEntities(resourcename), True);
+    Render(ObjectDict().Add('data', GetDAL.GetEntities(resourcename)));
   except
     on E: ENotFound do
     begin
-      Render(http_status.NotFound, e.Message);
+      Render(http_status.NotFound, E.Message);
     end;
   end;
 end;
 
-procedure TEntitiesController.GetEntity(const resourcename: string; const entityid: string);
+procedure TEntitiesController.GetEntity(const resourcename: string;
+  const entityid: string);
 begin
   try
     Render(GetDAL.GetEntity(resourcename, entityid), True);
   except
     on E: ENotFound do
     begin
-      Render(http_status.NotFound, e.Message);
+      Render(http_status.NotFound, E.Message);
     end;
   end;
 end;
@@ -122,11 +134,19 @@ procedure TEntitiesController.UpdateEntity(const resourcename,
   entityid: string);
 var
   lJson: TJsonObject;
+  lResourceName: string;
+  lXRef: string;
 begin
-  lJson := TJSONObject.Parse(Context.Request.Body) as TJSONObject;
+  lResourceName := resourceName;
+  lJson := TJsonObject.Parse(Context.Request.Body) as TJsonObject;
   try
     GetDAL.UpdateEntity(lJson, resourcename, entityid);
     Context.Response.StatusCode := http_status.OK;
+    lXRef := '/api/' + lResourceName + '/' + entityid;
+    StatusCode := HTTP_STATUS.Created;
+    Context.Response.SetCustomHeader('Location', lXRef);
+    Context.Response.SetCustomHeader('X-REF', lXRef);
+    Render(ObjectDict().Add('data', StrDict(['status', 'xref'], ['ok', lXRef])));
   finally
     lJson.Free;
   end;

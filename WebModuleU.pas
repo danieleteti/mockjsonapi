@@ -2,7 +2,7 @@
 //
 // MockJSONAPI
 //
-// Copyright (c) 2019 Daniele Teti
+// Copyright (c) 2020 Daniele Teti
 //
 // https://github.com/danieleteti/mockjsonapi
 //
@@ -32,7 +32,7 @@ uses System.SysUtils,
   MVCFramework;
 
 type
-  TMyWebModule = class(TWebModule)
+  TMainWM = class(TWebModule)
     procedure WebModuleCreate(Sender: TObject);
     procedure WebModuleDestroy(Sender: TObject);
   private
@@ -42,28 +42,29 @@ type
   end;
 
 var
-  WebModuleClass: TComponentClass = TMyWebModule;
+  WebModuleClass: TComponentClass = TMainWM;
 
 implementation
 
 {$R *.dfm}
 
-uses System.IOUtils, MVCFramework.Commons, MVCFramework.Middleware.CORS, EntitiesControllerU,
+uses System.IOUtils, MVCFramework.Commons, MVCFramework.Middleware.CORS,
+  EntitiesControllerU,
   SecurityHeadersMiddlewareU;
 
-procedure TMyWebModule.WebModuleCreate(Sender: TObject);
+procedure TMainWM.WebModuleCreate(Sender: TObject);
 begin
   FMVC := TMVCEngine.Create(Self,
     procedure(Config: TMVCConfig)
     begin
-      // enable static files
-      Config[TMVCConfigKey.DocumentRoot] := TPath.Combine(ExtractFilePath(GetModuleName(HInstance)), 'www');
       // session timeout (0 means session cookie)
       Config[TMVCConfigKey.SessionTimeout] := '0';
       // default content-type
-      Config[TMVCConfigKey.DefaultContentType] := TMVCConstants.DEFAULT_CONTENT_TYPE;
+      Config[TMVCConfigKey.DefaultContentType] :=
+        TMVCConstants.DEFAULT_CONTENT_TYPE;
       // default content charset
-      Config[TMVCConfigKey.DefaultContentCharset] := TMVCConstants.DEFAULT_CONTENT_CHARSET;
+      Config[TMVCConfigKey.DefaultContentCharset] :=
+        TMVCConstants.DEFAULT_CONTENT_CHARSET;
       // unhandled actions are permitted?
       Config[TMVCConfigKey.AllowUnhandledAction] := 'false';
       // default view file extension
@@ -72,16 +73,14 @@ begin
       Config[TMVCConfigKey.ViewPath] := 'templates';
       // Enable Server Signature in response
       Config[TMVCConfigKey.ExposeServerSignature] := 'true';
-      // Define a default URL for requests that don't map to a route or a file (useful for client side web app)
-      Config[TMVCConfigKey.FallbackResource] := 'index.html';
     end);
-  FMVC.
-    AddController(TEntitiesController).
-    AddMiddleware(TCORSMiddleware.Create).
-    AddMiddleware(TSecurityHeadersMiddleware.Create);
+  FMVC
+    .AddController(TEntitiesController)
+    .AddMiddleware(TCORSMiddleware.Create)
+    .AddMiddleware(TSecurityHeadersMiddleware.Create);
 end;
 
-procedure TMyWebModule.WebModuleDestroy(Sender: TObject);
+procedure TMainWM.WebModuleDestroy(Sender: TObject);
 begin
   FMVC.Free;
 end;
