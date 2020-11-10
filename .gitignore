@@ -72,3 +72,4 @@ tests\.idea
 
 tests/venv/
 mockjsonapi.res
+tests/__pycache__/

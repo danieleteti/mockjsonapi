@@ -48,15 +48,17 @@ uses
 
 procedure Logo;
 begin
-  TextColor(Red);
   WriteLn;
+  TextColor(DarkRed);
   WriteLn('  __  __  ____   _____ _  __    _  _____  ____  _   _          _____ _____ ');
   WriteLn(' |  \/  |/ __ \ / ____| |/ /   | |/ ____|/ __ \| \ | |   /\   |  __ \_   _|');
   WriteLn(' | \  / | |  | | |    | '' /    | | (___ | |  | |  \| |  /  \  | |__) || |  ');
+  TextColor(Red);
   WriteLn(' | |\/| | |  | | |    |  < _   | |\___ \| |  | | . ` | / /\ \ |  ___/ | |  ');
   WriteLn(' | |  | | |__| | |____| . \ |__| |____) | |__| | |\  |/ ____ \| |    _| |_ ');
   WriteLn(' |_|  |_|\____/ \_____|_|\_\____/|_____/ \____/|_| \_/_/    \_\_|   |_____|');
   WriteLn('                                                                           ');
+  TextColor(White);
   WriteLn(' version ' + VERSION);
   WriteLn;
 end;
@@ -96,7 +98,7 @@ begin
     repeat
       if lCmd.IsEmpty then
       begin
-        TextColor(TConsoleColor.White);
+        TextColor(TConsoleColor.Green);
         write('-> ');
         TextColor(Yellow);
         ReadLn(lCmd)
