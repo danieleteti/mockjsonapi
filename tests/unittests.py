@@ -43,7 +43,7 @@ class MockServerTests(unittest.TestCase):
         for i in range(10):
             d = dict()
             d['key'] = "value{:02}".format(i)
-            resp = requests.post(self.resname, json = d);
+            resp = requests.post(self.resname, json = d)
             self.assertEqual(201, resp.status_code)
             xref = resp.headers['X-REF']
             self.assertIsNotNone(xref)
