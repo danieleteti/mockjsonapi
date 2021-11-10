@@ -2,7 +2,7 @@
 //
 // MockJSONAPI
 //
-// Copyright (c) 2020 Daniele Teti
+// Copyright (c) 2021 Daniele Teti
 //
 // https://github.com/danieleteti/mockjsonapi
 //
@@ -30,7 +30,7 @@ uses
   JsonDataObjects;
 
 const
-  VERSION = '1.1.0';
+  VERSION = '1.1.2';
 
 type
   TConfig = class sealed
@@ -45,6 +45,7 @@ type
     destructor Destroy; override;
     function GetString(const ConfigName: string): string;
     function GetInteger(const ConfigName: string): Integer;
+    function GetBoolean(const ConfigName: string): Boolean;
     class destructor Destroy;
     class property Instance: TConfig read GetConfig;
   end;
@@ -76,6 +77,11 @@ end;
 class destructor TConfig.Destroy;
 begin
   sInstance.Free;
+end;
+
+function TConfig.GetBoolean(const ConfigName: string): Boolean;
+begin
+  Result := fConfigDict.B[ConfigName];
 end;
 
 class function TConfig.GetConfig: TConfig;

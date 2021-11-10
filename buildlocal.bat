@@ -1,4 +1,4 @@
-@echo off
+rem @echo off
 echo Building project...
 call rsvars.bat
 msbuild /t:build /p:config=Debug "mockjsonapi.dproj"

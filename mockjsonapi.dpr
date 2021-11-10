@@ -2,7 +2,7 @@
 //
 // MockJSONAPI
 //
-// Copyright (c) 2020 Daniele Teti
+// Copyright (c) 2021 Daniele Teti
 //
 // https://github.com/danieleteti/mockjsonapi
 //
@@ -93,7 +93,7 @@ begin
     LServer.KeepAlive := True;
     LServer.MaxConnections := 0;
     LServer.ListenQueue := 200;
-
+    LogI('TRACE is ' + TConfig.Instance.GetBoolean('trace').ToString(TUseBoolStrs.True));
     WriteLn('Write "quit" or "exit" to shutdown the server');
     repeat
       if lCmd.IsEmpty then

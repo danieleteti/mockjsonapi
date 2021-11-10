@@ -48,9 +48,13 @@ implementation
 
 {$R *.dfm}
 
-uses System.IOUtils, MVCFramework.Commons, MVCFramework.Middleware.CORS,
+uses System.IOUtils,
+  MVCFramework.Commons,
+  MVCFramework.Middleware.CORS,
+  MVCFramework.Middleware.Trace,
+  SecurityHeadersMiddlewareU,
   EntitiesControllerU,
-  SecurityHeadersMiddlewareU;
+  ConfigU;
 
 procedure TMainWM.WebModuleCreate(Sender: TObject);
 begin
@@ -78,6 +82,10 @@ begin
     .AddController(TEntitiesController)
     .AddMiddleware(TCORSMiddleware.Create)
     .AddMiddleware(TSecurityHeadersMiddleware.Create);
+  if TConfig.Instance.GetBoolean('trace') then
+  begin
+    FMVC.AddMiddleware(TMVCTraceMiddleware.Create(4096))
+  end;
 end;
 
 procedure TMainWM.WebModuleDestroy(Sender: TObject);
