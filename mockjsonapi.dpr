@@ -2,7 +2,7 @@
 //
 // MockJSONAPI
 //
-// Copyright (c) 2020 Daniele Teti
+// Copyright (c) 2020-2023 Daniele Teti
 //
 // https://github.com/danieleteti/mockjsonapi
 //
@@ -31,7 +31,7 @@ uses
   System.SysUtils,
   MVCFramework.Logger,
   MVCFramework.Commons,
-  MVCFramework.REPLCommandsHandlerU,
+  MVCFramework.Signal,
   Web.ReqMulti,
   Web.WebReq,
   Web.WebBroker,
@@ -53,8 +53,8 @@ begin
   WriteLn('  __  __  ____   _____ _  __    _  _____  ____  _   _          _____ _____ ');
   WriteLn(' |  \/  |/ __ \ / ____| |/ /   | |/ ____|/ __ \| \ | |   /\   |  __ \_   _|');
   WriteLn(' | \  / | |  | | |    | '' /    | | (___ | |  | |  \| |  /  \  | |__) || |  ');
-  TextColor(Red);
   WriteLn(' | |\/| | |  | | |    |  < _   | |\___ \| |  | | . ` | / /\ \ |  ___/ | |  ');
+  TextColor(Red);
   WriteLn(' | |  | | |__| | |____| . \ |__| |____) | |__| | |\  |/ ____ \| |    _| |_ ');
   WriteLn(' |_|  |_|\____/ \_____|_|\_\____/|_____/ \____/|_| \_/_/    \_\_|   |_____|');
   WriteLn('                                                                           ');
@@ -66,8 +66,6 @@ end;
 procedure RunServer(APort: Integer = 8080);
 var
   lServer: TIdHTTPWebBrokerBridge;
-  lCustomHandler: TMVCCustomREPLCommandsHandler;
-  lCmd: string;
 begin
   TextColor(White);
   TextBackground(Black);
@@ -76,16 +74,6 @@ begin
   Writeln('** Built with DMVCFramework Server ** build ' + DMVCFRAMEWORK_VERSION);
   TextColor(White);
   Writeln('Usage help: https://github.com/danieleteti/mockjsonapi');
-  if ParamCount >= 1 then
-    lCmd := ParamStr(1)
-  else
-    lCmd := 'start';
-
-  lCustomHandler := function(const Value: string; const Server: TIdHTTPWebBrokerBridge; out Handled: Boolean): THandleCommandResult
-    begin
-      Handled := False;
-      Result := THandleCommandResult.Unknown;
-    end;
 
   LServer := TIdHTTPWebBrokerBridge.Create(nil);
   try
@@ -93,43 +81,16 @@ begin
     LServer.KeepAlive := True;
     LServer.MaxConnections := 0;
     LServer.ListenQueue := 200;
-
-    WriteLn('Write "quit" or "exit" to shutdown the server');
-    repeat
-      if lCmd.IsEmpty then
-      begin
-        TextColor(TConsoleColor.Green);
-        write('-> ');
-        TextColor(Yellow);
-        ReadLn(lCmd)
-      end;
-      try
-        TextColor(TConsoleColor.Yellow);
-        case HandleCommand(lCmd.ToLower, LServer, lCustomHandler) of
-          THandleCommandResult.Continue:
-            begin
-              Continue;
-            end;
-          THandleCommandResult.Break:
-            begin
-              Break;
-            end;
-          THandleCommandResult.Unknown:
-            begin
-              SaveColors;
-              TextColor(TConsoleColor.Red);
-              REPLEmit('Unknown command: ' + lCmd);
-              RestoreSavedColors;
-            end;
-        end;
-      finally
-        lCmd := '';
-      end;
-    until false;
-
+    lServer.Active := True;
+    TextColor(Red);
+    WriteLn('CTRL+C to EXIT');
+    WaitForTerminationSignal;
+    TextColor(Yellow);
+    WriteLn('bye bye...');
   finally
     LServer.Free;
   end;
+  SetDefaults;
 end;
 
 begin
