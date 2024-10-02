@@ -82,6 +82,7 @@ begin
     LServer.MaxConnections := 0;
     LServer.ListenQueue := 200;
     lServer.Active := True;
+    Writeln('mockjsonapi is listening on http://localhost:' + APort.ToString);
     TextColor(Red);
     WriteLn('CTRL+C to EXIT');
     WaitForTerminationSignal;
@@ -90,7 +91,6 @@ begin
   finally
     LServer.Free;
   end;
-  SetDefaults;
 end;
 
 begin

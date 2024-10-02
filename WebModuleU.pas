@@ -73,6 +73,8 @@ begin
       Config[TMVCConfigKey.ViewPath] := 'templates';
       // Enable Server Signature in response
       Config[TMVCConfigKey.ExposeServerSignature] := 'true';
+
+      Config[TMVCConfigKey.LoadSystemControllers] := 'false';
     end);
   FMVC
     .AddController(TEntitiesController)
