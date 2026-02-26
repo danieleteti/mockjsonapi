@@ -1,215 +1,131 @@
 # MockJSONAPI Server
-MockJSONAPI is a mock server for a generic JSON API built with Delphi and delphimvcframework. Can be used with any client technology and language. When mockjsonapi server receives a requests it matches the request against the `data.json` that have been configured.
-If you are an experienced user, grab the latest [binary release here](https://github.com/danieleteti/mockjsonapi/releases/latest) otherwise, keep reading the docs.
 
-## Getting started
-Let's say that you need to develop a REST client (e.g. mobile app, web client, web SPA or a desktop thin client) and you need some endpoints to use. The usual problem in this case is that you need to start to develop the server before you can show something to the end user. MockJSONAPI server soves this problem giving to the developer a bare-bone REST server with the standard CRUD interface. The data are stored into a single JSON file.
+MockJSONAPI is a zero-configuration mock REST server built with Delphi and [DelphiMVCFramework](https://github.com/danieleteti/delphimvcframework). It exposes a full CRUD interface backed by a single JSON file — no database, no setup.
 
-The configuration of the server are really trivial. The `data.json` file contains all the data that will be served by the server. This is a sample `data.json` file:
+Use it to prototype REST clients (mobile apps, SPAs, desktop thin clients) without waiting for the real backend to be ready.
+
+Grab the latest [binary release here](https://github.com/danieleteti/mockjsonapi/releases/latest) or compile from source.
+
+## Quick Start
+
+1. Place `data.json` in the same folder as `mockjsonapi.exe`
+2. Optionally create a `.env` file to set the port (default `8080`):
+   ```
+   port = 8080
+   ```
+3. Run `mockjsonapi.exe`
+4. The server is ready at `http://localhost:8080`
+
+## Data File
+
+The `data.json` file contains all the resources served by the API. Each top-level key is a resource name, its value is an array of entities:
 
 ```json
 {
-	"projects": [
-		{
-			"_oid": 1,
-			"department": "marketing",
-			"description": "Falcon Fly"
-		},
-		{			
-			"_oid": 2,
-			"department": "R&D",
-			"description": "NextGen"
-		}
-	],
-	"departments": [],
-	"employee": []
+  "customers": [
+    {
+      "_oid": "1",
+      "name": "Daniele Teti",
+      "email": "daniele@example.com"
+    },
+    {
+      "_oid": "2",
+      "name": "Bruce Banner",
+      "email": "bruce@example.com"
+    }
+  ],
+  "products": []
 }
-
 ```
 
-MockJSONAPI server supports *all* the resources that you need. So you can ask to the API any resourceusing an HTTP `GET`. If that resource exists in the `data.json` file, then will be returned to the client, otherwise an empty array will be returned.
+- `_oid` is the unique identifier for each entity (Object ID).
+- When you `POST` a new entity, the server auto-generates an `_oid` (UUID) if not provided.
+- If you request a resource that doesn't exist in `data.json`, an empty array is returned (not an error).
+- If you `POST` to a resource that doesn't exist, it is created automatically.
 
-If you try to create a new entity under a specific resource, then that resource will be automaticaly created and stored in the file.
-I strongly suggest to play with the server using curl or Postman. Just launch `mockjsonapi.exe` and follow the curl session below.
+## API Endpoints
 
-Here's a typical curl session which uses the `mockjsonapi` server.
+All endpoints use the base path `/api`.
 
+| Method | URL | Description | Status |
+|--------|-----|-------------|--------|
+| `GET` | `/api/{resource}` | Get all entities in a resource | `200` |
+| `GET` | `/api/{resource}/{oid}` | Get a single entity by `_oid` | `200` / `404` |
+| `POST` | `/api/{resource}` | Create a new entity | `201` |
+| `PUT` | `/api/{resource}/{oid}` | Update an existing entity | `200` |
+| `DELETE` | `/api/{resource}/{oid}` | Delete an entity | `200` |
+| `DELETE` | `/api/{resource}` | Delete an entire resource | `200` |
 
-Let's ask for a non existent resource.
-```
-Daniele@DANIELETETI C:\Users\Daniele
-$ curl -i -XGET http://localhost:8080/api/customers
-HTTP/1.1 200 OK
-Connection: keep-alive
-Content-Type: application/json; charset=utf-8
-Content-Length: 11
-Date: Mon, 09 Nov 2020 16:48:02 GMT
-Server: DelphiMVCFramework
-X-Powered-By: DMVCFramework 3.2.1 (carbon)
-Access-Control-Allow-Origin: *
-Access-Control-Allow-Methods: POST,GET,OPTIONS,PUT,DELETE
-Access-Control-Allow-Headers: Content-Type, Accept, jwtusername, jwtpassword, authentication, authorization
-Access-Control-Allow-Credentials: true
-X-XSS-Protection: 1; mode = block
-X-Content-Type-Options: nosniff
-X-MOCK-JSON-API: 1.1.0
+## Response Format
 
-{"data":[]}
-```
-As expected, the api returns an empty array in `data` property (not an error, just an empty array).
+All responses are JSON wrapped in a `data` property:
 
-Now, we try to get a specific entity from the resource, and we expect an error in this case.
-```
-Daniele@DANIELETETI C:\Users\Daniele
-$ curl -i -XGET http://localhost:8080/api/customers/3
-HTTP/1.1 404 Not Found
-Connection: close
-Content-Type: application/json; charset=utf-8
-Content-Length: 139
-Date: Mon, 09 Nov 2020 16:49:01 GMT
-Server: DelphiMVCFramework
-X-Powered-By: DMVCFramework 3.2.1 (carbon)
-Access-Control-Allow-Origin: *
-Access-Control-Allow-Methods: POST,GET,OPTIONS,PUT,DELETE
-Access-Control-Allow-Headers: Content-Type, Accept, jwtusername, jwtpassword, authentication, authorization
-Access-Control-Allow-Credentials: true
-X-XSS-Protection: 1; mode = block
-X-Content-Type-Options: nosniff
-X-MOCK-JSON-API: 1.1.0
-
-{"classname":"","detailedmessage":"","apperrorcode":0,"items":[],"statuscode":404,"reasonstring":"error","message":"Not Found","data":null}
-```
-Here's the error. All the errors are returned as json object.
-
-
-Now we create an actual object into the resource. The resource will be created automatically.
-```
-Daniele@DANIELETETI C:\Users\Daniele
-$ curl -i -XPOST http://localhost:8080/api/customers --data "{\"name\":\"Daniele Teti\"}"
-HTTP/1.1 201 Created
-Connection: keep-alive
-Content-Type: application/json; charset=utf-8
-Content-Length: 85
-Date: Mon, 09 Nov 2020 16:50:13 GMT
-Server: DelphiMVCFramework
-X-Powered-By: DMVCFramework 3.2.1 (carbon)
-Access-Control-Allow-Origin: *
-Access-Control-Allow-Methods: POST,GET,OPTIONS,PUT,DELETE
-Access-Control-Allow-Headers: Content-Type, Accept, jwtusername, jwtpassword, authentication, authorization
-Access-Control-Allow-Credentials: true
-X-XSS-Protection: 1; mode = block
-X-Content-Type-Options: nosniff
-X-MOCK-JSON-API: 1.1.0
-X-REF: /api/customers/61616787-1F08-4187-ADBA-BCB8CA065E96
-Location: /api/customers/61616787-1F08-4187-ADBA-BCB8CA065E96
-
-{"data":{"status":"ok","xref":"/api/customers/61616787-1F08-4187-ADBA-BCB8CA065E96"}}
-```
-The resource and the entity have been created. The entity is available for `GET` requests at the URL returned by the `X-REF` header. Let's try to retrieve the object just created.
-
-```
-Daniele@DANIELETETI C:\Users\Daniele
-$ curl -i -XGET http://localhost:8080/api/customers/61616787-1F08-4187-ADBA-BCB8CA065E96
-HTTP/1.1 200 OK
-Connection: keep-alive
-Content-Type: application/json; charset=utf-8
-Content-Length: 69
-Date: Mon, 09 Nov 2020 16:51:13 GMT
-Server: DelphiMVCFramework
-X-Powered-By: DMVCFramework 3.2.1 (carbon)
-Access-Control-Allow-Origin: *
-Access-Control-Allow-Methods: POST,GET,OPTIONS,PUT,DELETE
-Access-Control-Allow-Headers: Content-Type, Accept, jwtusername, jwtpassword, authentication, authorization
-Access-Control-Allow-Credentials: true
-X-XSS-Protection: 1; mode = block
-X-Content-Type-Options: nosniff
-X-MOCK-JSON-API: 1.1.0
-
-{"name":"Daniele Teti","_oid":"61616787-1F08-4187-ADBA-BCB8CA065E96"}
-```
-Got It! Here's the JSON object just created. As you can see, MockJSONAPI server adds a standard `_oid` property as `ObjectIdentitied` that you can use to retrieve the object.
-
-Let's create another entity.
-```
-Daniele@DANIELETETI C:\Users\Daniele
-$ curl -i -XPOST http://localhost:8080/api/customers --data "{\"name\":\"Bruce Banner\"}"
-HTTP/1.1 201 Created
-Connection: keep-alive
-Content-Type: application/json; charset=utf-8
-Content-Length: 85
-Date: Mon, 09 Nov 2020 16:51:53 GMT
-Server: DelphiMVCFramework
-X-Powered-By: DMVCFramework 3.2.1 (carbon)
-Access-Control-Allow-Origin: *
-Access-Control-Allow-Methods: POST,GET,OPTIONS,PUT,DELETE
-Access-Control-Allow-Headers: Content-Type, Accept, jwtusername, jwtpassword, authentication, authorization
-Access-Control-Allow-Credentials: true
-X-XSS-Protection: 1; mode = block
-X-Content-Type-Options: nosniff
-X-MOCK-JSON-API: 1.1.0
-X-REF: /api/customers/4F1EB312-AD4F-4EDA-9F64-4CACAAB798E3
-Location: /api/customers/4F1EB312-AD4F-4EDA-9F64-4CACAAB798E3
-
-{"data":{"status":"ok","xref":"/api/customers/4F1EB312-AD4F-4EDA-9F64-4CACAAB798E3"}}
+**GET collection** — returns the array of entities:
+```json
+{"data": [{"_oid": "1", "name": "Daniele Teti"}, {"_oid": "2", "name": "Bruce Banner"}]}
 ```
 
-To retrieve the full collection you can send a GET request to the resource without parameter, as following.
-```
-Daniele@DANIELETETI C:\Users\Daniele
-$ curl -i -XGET http://localhost:8080/api/customers
-HTTP/1.1 200 OK
-Connection: keep-alive
-Content-Type: application/json; charset=utf-8
-Content-Length: 150
-Date: Mon, 09 Nov 2020 16:59:49 GMT
-Server: DelphiMVCFramework
-X-Powered-By: DMVCFramework 3.2.1 (carbon)
-Access-Control-Allow-Origin: *
-Access-Control-Allow-Methods: POST,GET,OPTIONS,PUT,DELETE
-Access-Control-Allow-Headers: Content-Type, Accept, jwtusername, jwtpassword, authentication, authorization
-Access-Control-Allow-Credentials: true
-X-XSS-Protection: 1; mode = block
-X-Content-Type-Options: nosniff
-X-MOCK-JSON-API: 1.1.0
-
-{"data":[{"name":"Daniele Teti","_oid":"61616787-1F08-4187-ADBA-BCB8CA065E96"},{"name":"Bruce Banner","_oid":"4F1EB312-AD4F-4EDA-9F64-4CACAAB798E3"}]}
+**GET single entity** — returns the entity object:
+```json
+{"data": {"_oid": "1", "name": "Daniele Teti"}}
 ```
 
-## Endpoints supported by MockJSONAPI Server
+**POST** — returns status and the reference URL to the created entity:
+```json
+{"data": {"status": "ok", "xref": "/api/customers/A1B2C3D4-..."}}
+```
+The `Location` and `X-REF` headers also contain the URL of the new entity.
 
-### Gets the entire resource list
-```
-GET /api/resourcename
-```
-
-### Gets the resource with `_oid = 1`
-```
-GET /api/resourcename/1
-```
-
-### Create a new resource from the request body
-```
-POST /api/resourcename
-{...body...}
+**PUT / DELETE** — returns status:
+```json
+{"data": {"status": "ok"}}
 ```
 
-### Updates the resource with `_oid = 1' using the request body
-```
-PUT /api/resourcename/1
-{...body...}
-```
-
-### Deletes resource with `_oid = 1`
-```
-DELETE /api/resourcename/1
+**Errors** (e.g. entity not found) — returns a `404`:
+```json
+{"message": "Not Found", "statuscode": 404}
 ```
 
-### Deletes resource `resourcename`
+## curl Examples
 
+**List all customers:**
+```bash
+curl http://localhost:8080/api/customers
 ```
-DELETE /api/resourcename
+
+**Get a single customer:**
+```bash
+curl http://localhost:8080/api/customers/1
 ```
 
-## How to use it
+**Create a customer:**
+```bash
+curl -X POST http://localhost:8080/api/customers \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Tony Stark", "email": "tony@stark.com"}'
+```
 
-Using MockJSONAPI Server is really siple. Just run the executable with the `data.json` file in the exe folder (the release already contains a sample `data.json` file). You are productive in seconds starting to use the Mock API. If you want to "load" data in the server storage, just change the `data.json` with your own data.
+**Update a customer:**
+```bash
+curl -X PUT http://localhost:8080/api/customers/1 \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Daniele Teti", "email": "daniele@new.com"}'
+```
+
+**Delete a customer:**
+```bash
+curl -X DELETE http://localhost:8080/api/customers/1
+```
+
+## CORS
+
+CORS is enabled by default (`Access-Control-Allow-Origin: *`), so the API can be called directly from any web page or SPA running on a different origin.
+
+## Built With
+
+- [Delphi](https://www.embarcadero.com/products/delphi) — Object Pascal
+- [DelphiMVCFramework](https://github.com/danieleteti/delphimvcframework) — Web framework for Delphi
+
+## License
+
+Apache License 2.0 — see [LICENSE](LICENSE) for details.

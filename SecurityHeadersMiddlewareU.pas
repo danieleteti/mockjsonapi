@@ -2,7 +2,7 @@
 //
 // MockJSONAPI
 //
-// Copyright (c) 2020 Daniele Teti
+// Copyright (c) 2026 Daniele Teti
 //
 // https://github.com/danieleteti/mockjsonapi
 //

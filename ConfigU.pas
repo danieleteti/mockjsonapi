@@ -2,7 +2,7 @@
 //
 // MockJSONAPI
 //
-// Copyright (c) 2020 Daniele Teti
+// Copyright (c) 2026 Daniele Teti
 //
 // https://github.com/danieleteti/mockjsonapi
 //
@@ -26,73 +26,9 @@ unit ConfigU;
 
 interface
 
-uses
-  JsonDataObjects;
-
 const
-  VERSION = '1.1.1';
-
-type
-  TConfig = class sealed
-  private
-    class var sInstance: TConfig;
-
-  var
-    fConfigDict: TJsonObject;
-    constructor Create;
-    class function GetConfig: TConfig; static;
-  public
-    destructor Destroy; override;
-    function GetString(const ConfigName: string): string;
-    function GetInteger(const ConfigName: string): Integer;
-    class destructor Destroy;
-    class property Instance: TConfig read GetConfig;
-  end;
+  VERSION = '1.2.0';
 
 implementation
-
-uses
-  System.IOUtils, System.SysUtils;
-
-{ TConfig }
-
-constructor TConfig.Create;
-begin
-  fConfigDict := nil;
-  if TFile.Exists('config.json') then
-  begin
-    fConfigDict := TJsonObject.ParseUtf8(UTF8Encode(TFile.ReadAllText('config.json'))) as TJsonObject;
-  end
-  else
-    raise Exception.Create('Cannot find "config.json" file');
-end;
-
-destructor TConfig.Destroy;
-begin
-  fConfigDict.Free;
-  fConfigDict := nil;
-end;
-
-class destructor TConfig.Destroy;
-begin
-  sInstance.Free;
-end;
-
-class function TConfig.GetConfig: TConfig;
-begin
-  if not Assigned(sInstance) then
-    sInstance := TConfig.Create;
-  Result := sInstance;
-end;
-
-function TConfig.GetInteger(const ConfigName: string): Integer;
-begin
-  Result := fConfigDict.I[ConfigName];
-end;
-
-function TConfig.GetString(const ConfigName: string): string;
-begin
-  Result := fConfigDict.S[ConfigName];
-end;
 
 end.

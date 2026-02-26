@@ -2,7 +2,7 @@
 //
 // MockJSONAPI
 //
-// Copyright (c) 2020-2023 Daniele Teti
+// Copyright (c) 2026 Daniele Teti
 //
 // https://github.com/danieleteti/mockjsonapi
 //
@@ -48,33 +48,22 @@ uses
 
 procedure Logo;
 begin
-  WriteLn;
-  TextColor(DarkRed);
-  WriteLn('  __  __  ____   _____ _  __    _  _____  ____  _   _          _____ _____ ');
-  WriteLn(' |  \/  |/ __ \ / ____| |/ /   | |/ ____|/ __ \| \ | |   /\   |  __ \_   _|');
-  WriteLn(' | \  / | |  | | |    | '' /    | | (___ | |  | |  \| |  /  \  | |__) || |  ');
-  WriteLn(' | |\/| | |  | | |    |  < _   | |\___ \| |  | | . ` | / /\ \ |  ___/ | |  ');
-  TextColor(Red);
-  WriteLn(' | |  | | |__| | |____| . \ |__| |____) | |__| | |\  |/ ____ \| |    _| |_ ');
-  WriteLn(' |_|  |_|\____/ \_____|_|\_\____/|_____/ \____/|_| \_/_/    \_\_|   |_____|');
-  WriteLn('                                                                           ');
   TextColor(White);
+  TextBackground(Black);
+  WriteLn;
+  WriteHeader('MockJSON API');
   WriteLn(' version ' + VERSION);
   WriteLn;
+  TextColor(Green);
+  Writeln('** Built with DMVCFramework Server ** build ' + DMVCFRAMEWORK_VERSION);
+  TextColor(White);
+  Writeln('Usage help: https://github.com/danieleteti/mockjsonapi');
 end;
 
 procedure RunServer(APort: Integer = 8080);
 var
   lServer: TIdHTTPWebBrokerBridge;
 begin
-  TextColor(White);
-  TextBackground(Black);
-  Logo;
-  TextColor(Green);
-  Writeln('** Built with DMVCFramework Server ** build ' + DMVCFRAMEWORK_VERSION);
-  TextColor(White);
-  Writeln('Usage help: https://github.com/danieleteti/mockjsonapi');
-
   LServer := TIdHTTPWebBrokerBridge.Create(nil);
   try
     LServer.DefaultPort := APort;
@@ -82,12 +71,10 @@ begin
     LServer.MaxConnections := 0;
     LServer.ListenQueue := 200;
     lServer.Active := True;
-    Writeln('mockjsonapi is listening on http://localhost:' + APort.ToString);
-    TextColor(Red);
-    WriteLn('CTRL+C to EXIT');
+    LogI('mockjsonapi is listening on http://localhost:' + APort.ToString);
+    LogI('CTRL+C to EXIT');
     WaitForTerminationSignal;
-    TextColor(Yellow);
-    WriteLn('bye bye...');
+    LogI('bye bye...');
   finally
     LServer.Free;
   end;
@@ -96,11 +83,13 @@ end;
 begin
   ReportMemoryLeaksOnShutdown := True;
   IsMultiThread := True;
+  UseConsoleLogger := True;
   try
     if WebRequestHandler <> nil then
       WebRequestHandler.WebModuleClass := WebModuleClass;
     WebRequestHandlerProc.MaxConnections := 1024;
-    RunServer(TConfig.Instance.GetInteger('port'));
+    Logo();
+    RunServer(dotEnv.Env('port', 8080));
   except
     on E: Exception do
     begin

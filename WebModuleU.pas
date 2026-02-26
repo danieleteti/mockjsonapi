@@ -2,7 +2,7 @@
 //
 // MockJSONAPI
 //
-// Copyright (c) 2020 Daniele Teti
+// Copyright (c) 2026 Daniele Teti
 //
 // https://github.com/danieleteti/mockjsonapi
 //
@@ -26,7 +26,8 @@ unit WebModuleU;
 
 interface
 
-uses System.SysUtils,
+uses
+  System.SysUtils,
   System.Classes,
   Web.HTTPApp,
   MVCFramework;
@@ -38,7 +39,7 @@ type
   private
     FMVC: TMVCEngine;
   public
-    { Public declarations }
+  { Public declarations }
   end;
 
 var
@@ -48,38 +49,40 @@ implementation
 
 {$R *.dfm}
 
-uses System.IOUtils, MVCFramework.Commons, MVCFramework.Middleware.CORS,
+uses
+  System.IOUtils,
+  MVCFramework.Commons,
+  MVCFramework.Middleware.CORS,
   EntitiesControllerU,
   SecurityHeadersMiddlewareU;
 
 procedure TMainWM.WebModuleCreate(Sender: TObject);
 begin
-  FMVC := TMVCEngine.Create(Self,
-    procedure(Config: TMVCConfig)
-    begin
-      // session timeout (0 means session cookie)
-      Config[TMVCConfigKey.SessionTimeout] := '0';
-      // default content-type
-      Config[TMVCConfigKey.DefaultContentType] :=
-        TMVCConstants.DEFAULT_CONTENT_TYPE;
-      // default content charset
-      Config[TMVCConfigKey.DefaultContentCharset] :=
-        TMVCConstants.DEFAULT_CONTENT_CHARSET;
-      // unhandled actions are permitted?
-      Config[TMVCConfigKey.AllowUnhandledAction] := 'false';
-      // default view file extension
-      Config[TMVCConfigKey.DefaultViewFileExtension] := 'html';
-      // view path
-      Config[TMVCConfigKey.ViewPath] := 'templates';
-      // Enable Server Signature in response
-      Config[TMVCConfigKey.ExposeServerSignature] := 'true';
+  FMVC :=
+      TMVCEngine.Create(
+          Self,
+          procedure(Config: TMVCConfig)
+          begin
+            // default content-type
+            Config[TMVCConfigKey.DefaultContentType] := TMVCConstants.DEFAULT_CONTENT_TYPE;
+            // default content charset
+            Config[TMVCConfigKey.DefaultContentCharset] := TMVCConstants.DEFAULT_CONTENT_CHARSET;
+            // unhandled actions are permitted?
+            Config[TMVCConfigKey.AllowUnhandledAction] := 'false';
+            // default view file extension
+            Config[TMVCConfigKey.DefaultViewFileExtension] := 'html';
+            // view path
+            Config[TMVCConfigKey.ViewPath] := 'templates';
+            // Enable Server Signature in response
+            Config[TMVCConfigKey.ExposeServerSignature] := 'true';
 
-      Config[TMVCConfigKey.LoadSystemControllers] := 'false';
-    end);
+            Config[TMVCConfigKey.LoadSystemControllers] := 'false';
+          end
+      );
   FMVC
-    .AddController(TEntitiesController)
-    .AddMiddleware(TCORSMiddleware.Create)
-    .AddMiddleware(TSecurityHeadersMiddleware.Create);
+      .AddController(TEntitiesController)
+      .AddMiddleware(TCORSMiddleware.Create)
+      .AddMiddleware(TSecurityHeadersMiddleware.Create);
 end;
 
 procedure TMainWM.WebModuleDestroy(Sender: TObject);
